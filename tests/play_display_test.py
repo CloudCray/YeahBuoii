@@ -11,7 +11,7 @@ from pprint import pprint
 
 import os
 
-dirname = r"G:\Dropbox\Projects\Engineering\YeahBuoii\audio\samples"
+dirname = r"..\audio\samples"
 
 FRAMES = 44100
 samples = []
