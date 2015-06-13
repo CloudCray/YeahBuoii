@@ -2,20 +2,21 @@ import matplotlib
 import numpy as np
 import matplotlib.pyplot as plt
 
-from sklearn.svm import SVC
+from sklearn.naive_bayes import GaussianNB
 
-from scikits.audiolab import Sndfile
+# from scikits.audiolab import Sndfile
+import wave
 
 from pprint import pprint
 
 import os
 
-dirname = r"G:\Dropbox\Projects\Engineering\YeahBuoii\audio\samples"
+dirname = r"../audio/samples"
 
 FRAMES = 44100
 samples = []
 
-def top_100(sample):
+def top_100_f(sample):
         sp = np.fft.fft(sample)
         freq = np.fft.fftfreq(sample.shape[-1])
 
@@ -30,12 +31,15 @@ def top_100(sample):
         top_100_x = abs(freq[i100])
         return np.array([max_x, top_100_x]).flatten()
 
+
 for f in os.listdir(dirname):
     if f.endswith(".wav"):
         fn = os.path.join(dirname, f)
-        sf = Sndfile(fn)
-        frames = sf.read_frames(sf.nframes)
-        sample = frames[:FRAMES]
+        # sf = Sndfile(fn)
+        # frames = sf.read_frames(sf.nframes)
+        wf = wave.open(fn, "rb")
+        frames = wf.readframes(wf.getnframes())
+        sample = np.fromstring(frames[:FRAMES], "Int16")
 
         sp = np.fft.fft(sample)
         freq = np.fft.fftfreq(sample.shape[-1])
@@ -60,5 +64,18 @@ for f in os.listdir(dirname):
 classifier_x = [np.array([x[2], x[3]]).flatten() for x in samples]
 classifier_y = [x[0].split("_")[0] for x in samples]
 
-dynamic_clf = SVC(kernel="linear")
+dynamic_clf = GaussianNB()
 dynamic_clf.fit(classifier_x, classifier_y)
+
+
+for f in os.listdir(dirname):
+    if f.endswith(".wav"):
+        fn = os.path.join(dirname, f)
+
+        wf = wave.open(fn, "rb")
+        frames = wf.readframes(wf.getnframes())
+        sample = np.fromstring(frames[:FRAMES], "Int16")
+
+        p = dynamic_clf.predict(top_100_f(sample))
+
+        print("{0}: {1}".format(f, p[0]))

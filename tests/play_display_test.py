@@ -5,13 +5,15 @@ from pylab import *
 
 from sklearn.naive_bayes import GaussianNB
 
-from scikits.audiolab import Sndfile
+import wave
+# from scikits.audiolab import Sndfile
 
 from pprint import pprint
+from models.player import play_wave
 
 import os
 
-dirname = r"..\audio\samples"
+dirname = r"../audio/samples"
 
 FRAMES = 44100
 samples = []
@@ -34,9 +36,11 @@ def top_100_f(sample):
 for f in os.listdir(dirname):
     if f.endswith(".wav"):
         fn = os.path.join(dirname, f)
-        sf = Sndfile(fn)
-        frames = sf.read_frames(sf.nframes)
-        sample = frames[:FRAMES]
+        # sf = Sndfile(fn)
+        # frames = sf.read_frames(sf.nframes)
+        wf = wave.open(fn, "rb")
+        frames = wf.readframes(wf.getnframes())
+        sample = np.fromstring(frames[:FRAMES], "Int16")
 
         sp = np.fft.fft(sample)
         freq = np.fft.fftfreq(sample.shape[-1])
@@ -65,15 +69,16 @@ dynamic_clf = GaussianNB()
 dynamic_clf.fit(classifier_x, classifier_y)
 
 
-import winsound
+# import winsound
 ion()
 fig = plt.figure()
 
 f = "ship_1.wav"
 fn = os.path.join(dirname, f)
-sf = Sndfile(fn)
-frames = sf.read_frames(sf.nframes)
-sample = frames[:FRAMES]
+
+wf = wave.open(fn, "rb")
+frames = wf.readframes(wf.getnframes())
+sample = np.fromstring(frames[:FRAMES], "Int16")
 
 p = dynamic_clf.predict(top_100_f(sample))
 
@@ -84,15 +89,15 @@ title(p[0])
 plot(sample)
 draw()
 
-winsound.PlaySound(fn, winsound.SND_FILENAME)
+play_wave(fn)
 print("{0}: {1}".format(f, p[0]))
 
 
 f = "whale_1.wav"
 fn = os.path.join(dirname, f)
-sf = Sndfile(fn)
-frames = sf.read_frames(sf.nframes)
-sample = frames[:FRAMES]
+wf = wave.open(fn, "rb")
+frames = wf.readframes(wf.getnframes())
+sample = np.fromstring(frames[:FRAMES], "Int16")
 
 p = dynamic_clf.predict(top_100_f(sample))
 
@@ -102,15 +107,15 @@ title(p[0])
 plot(sample)
 draw()
 
-winsound.PlaySound(fn, winsound.SND_FILENAME)
+play_wave(fn)
 print("{0}: {1}".format(f, p[0]))
 
 
 f = "whale_13.wav"
 fn = os.path.join(dirname, f)
-sf = Sndfile(fn)
-frames = sf.read_frames(sf.nframes)
-sample = frames[:FRAMES]
+wf = wave.open(fn, "rb")
+frames = wf.readframes(wf.getnframes())
+sample = np.fromstring(frames[:FRAMES], "Int16")
 
 p = dynamic_clf.predict(top_100_f(sample))
 
@@ -120,15 +125,15 @@ title(p[0])
 plot(sample)
 draw()
 
-winsound.PlaySound(fn, winsound.SND_FILENAME)
+play_wave(fn)
 print("{0}: {1}".format(f, p[0]))
 
 
 f = "ship_14.wav"
 fn = os.path.join(dirname, f)
-sf = Sndfile(fn)
-frames = sf.read_frames(sf.nframes)
-sample = frames[:FRAMES]
+wf = wave.open(fn, "rb")
+frames = wf.readframes(wf.getnframes())
+sample = np.fromstring(frames[:FRAMES], "Int16")
 
 p = dynamic_clf.predict(top_100_f(sample))
 
@@ -139,15 +144,15 @@ title(p[0])
 plot(sample)
 draw()
 
-winsound.PlaySound(fn, winsound.SND_FILENAME)
+play_wave(fn)
 print("{0}: {1}".format(f, p[0]))
 
 
 f = "whale_10.wav"
 fn = os.path.join(dirname, f)
-sf = Sndfile(fn)
-frames = sf.read_frames(sf.nframes)
-sample = frames[:FRAMES]
+wf = wave.open(fn, "rb")
+frames = wf.readframes(wf.getnframes())
+sample = np.fromstring(frames[:FRAMES], "Int16")
 
 p = dynamic_clf.predict(top_100_f(sample))
 
@@ -157,5 +162,5 @@ title(p[0])
 plot(sample)
 draw()
 
-winsound.PlaySound(fn, winsound.SND_FILENAME)
+play_wave(fn)
 print("{0}: {1}".format(f, p[0]))
